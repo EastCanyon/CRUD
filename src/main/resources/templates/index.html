@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판</title>
+    <style>
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        /* 각 열의 너비 조정 */
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 10%;
+        }
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 30%;
+        }
+        th:nth-child(3),
+        td:nth-child(3) {
+            width: 20%;
+        }
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 20%;
+        }
+        th:nth-child(5),
+        td:nth-child(5) {
+            width: 10%;
+        }
+        /* 버튼 스타일 */
+        .btn {
+            display: block;
+            width: 100px;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #8258FA;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        /* 버튼 컨테이너 */
+        .btn-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 50px;
+        }
+        /* 페이지네이션 */
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .pagination ul {
+            list-style: none; /* 목록 스타일 제거 */
+            padding: 0;
+            margin: 0;
+        }
+
+        .pagination li {
+            display: inline-block;
+        }
+
+        .pagination a {
+            display: inline-block;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+        }
+
+        .pagination a.active {
+            background-color: #8258FA;
+            color: white;
+        }
+
+        .pagination a:not(.active) {
+            margin-right: 4px;
+        }
+
+    </style>
+</head>
+<body>
+<h1>게시판</h1>
+<table>
+    <thead>
+    <tr>
+        <th>게시글 번호</th>
+        <th>제목</th>
+        <th>작성자</th>
+        <th>작성일</th>
+        <th>조회수</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="post : ${postsPage.content}">
+        <td th:text="${post.id}"></td>
+        <td><a th:href="@{/posts/post/{postId}(postId=${post.id})}" th:text="${post.title}"></a></td>
+        <td th:text="${post.author}"></td>
+        <td th:text="${post.createdAt}"></td>
+        <td th:text="${post.viewCount}"></td>
+    </tr>
+    </tbody>
+</table>
+<!-- 글 작성 버튼 -->
+<!-- 버튼 컨테이너와 버튼 -->
+<div class="btn-container">
+    <a href="/posts/new" class="btn">글 작성</a>
+</div>
+
+<!-- 페이지네이션 -->
+<div class="pagination">
+    <ul>
+        <li th:if="${postsPage.number > 0}">
+            <a th:href="@{/posts(page=1)}">First</a>
+        </li>
+        <li th:if="${postsPage.number > 0}">
+            <a th:href="@{/posts(page=${postsPage.number})}">Previous</a>
+        </li>
+        <li th:each="i : ${#numbers.sequence(1, postsPage.totalPages)}">
+<!--            <a th:href="@{/posts(page=${i})}" th:text="${i + 1}" th:class="${postsPage.number + 1 == i ? 'active' : ''}"></a>-->
+            <a th:href="@{/posts(page=${i})}" th:text="${i}" th:class="${postsPage.number == i - 1 ? 'active' : ''}"></a>
+        </li>
+        <li th:if="${!postsPage.last}">
+            <a th:href="@{/posts(page=${postsPage.number + 2})}">Next</a>
+        </li>
+        <li th:if="${!postsPage.last}">
+            <a th:href="@{/posts(page=${postsPage.totalPages})}">Last</a>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>
